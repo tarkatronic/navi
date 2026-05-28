@@ -5,8 +5,8 @@
   "author": {
     "name": "Affirm"
   },
-  "homepage": "https://github.com/Affirm/navi",
-  "repository": "https://github.com/Affirm/navi",
+  "homepage": "https://github.com/tarkatronic/navi",
+  "repository": "https://github.com/tarkatronic/navi",
   "license": "BSD-3-Clause",
   "keywords": ["claude-code", "macos", "monitor", "permissions", "swift"]
 }

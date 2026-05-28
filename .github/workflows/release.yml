@@ -2,7 +2,8 @@ name: Release
 
 on:
   push:
-    branches: [main]
+    branches: [main, feat/ci-release-workflow]
+  workflow_dispatch:
 
 permissions:
   contents: write       # gh release create, tag creation

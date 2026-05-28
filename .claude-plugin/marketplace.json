@@ -1,7 +1,7 @@
 {
-  "name": "navi",
+  "name": "navi-dev",
   "owner": {
-    "name": "Affirm"
+    "name": "tarkatronic"
   },
   "metadata": {
     "description": "Claude Code plugin marketplace for Navi — a floating macOS session monitor."

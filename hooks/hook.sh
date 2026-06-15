@@ -78,10 +78,6 @@ READ_RESULT=$(cat | python3 "$SCRIPT_DIR/parse_event.py")
 EVENT=$(echo "$READ_RESULT" | cut -f1)
 EVENT_ID=$(echo "$READ_RESULT" | cut -f2)
 
-# Track whether Navi responded so we can set NAVI_RESPONDED for potential
-# future use.  We intentionally do NOT write a cancel file on exit — instead
-# the card stays visible showing "Respond in terminal" and is dismissed by
-# PostToolUse (approve) or Stop events (deny/move on).
 NAVI_RESPONDED=false
 
 case "$EVENT" in
@@ -108,7 +104,14 @@ case "$EVENT" in
             sleep 0.3
         done
 
-        # Timeout — fall back to terminal prompt
+        # Timeout — handing off to the terminal prompt.  Write a cancel signal
+        # so Navi dismisses the now-stale permission card immediately rather than
+        # leaving it frozen until the turn's Stop fires.
+        if [ -n "$EVENT_ID" ]; then
+            CANCEL_TMP="$EVENTS_DIR/.cancel-${EVENT_ID}.tmp"
+            CANCEL_FILE="$EVENTS_DIR/cancel-${EVENT_ID}.json"
+            printf '{"id":"%s"}' "$EVENT_ID" > "$CANCEL_TMP" && mv "$CANCEL_TMP" "$CANCEL_FILE"
+        fi
         echo '{"hookSpecificOutput":{"hookEventName":"PermissionRequest","decision":{"behavior":"ask"}}}'
         ;;
 

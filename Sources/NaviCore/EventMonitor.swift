@@ -196,7 +196,14 @@ public class EventMonitor: ObservableObject {
         let now = Date()
         DispatchQueue.main.async {
             self.events.removeAll { event in
-                if event.isPending { return false }
+                if event.isPending {
+                    // Safety net: if the hook timed out but failed to write its
+                    // cancel signal (crash, disk error), age the card out once
+                    // we're well past the expiry window. The cancel signal from
+                    // hook.sh is the primary dismissal path; this catches the rest.
+                    if let exp = event.expires, now > exp.addingTimeInterval(30) { return true }
+                    return false
+                }
                 if event.type == "info" && !event.resolved { return false }
                 if event.resolved { return now.timeIntervalSince(event.timestamp) > 10 }
                 return now.timeIntervalSince(event.timestamp) > 60
